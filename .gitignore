@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+# Virtual environment
+venv/
+.env
+
+
+# Dataset
+data/
+
+# Audio
+*.wav
+*.mp3
+
+# Logs
+*.log
