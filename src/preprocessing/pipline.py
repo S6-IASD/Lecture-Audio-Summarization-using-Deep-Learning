@@ -4,6 +4,10 @@ import webrtcvad
 
 from vad import get_segments
 from chunks import chunk_audio
+from audio_cleaner import clean_audio
+import librosa
+import numpy as np
+
 
 def run_pipeline(
     input_dir,
@@ -32,10 +36,26 @@ def run_pipeline(
         print(f"🎙️  Traitement : {filename}")
 
         # 2. Chargement
-        audio = AudioSegment.from_file(filepath)
-
+        # audio = AudioSegment.from_file(filepath)
+        audio, sr = librosa.load(filepath, sr=16000, mono=True)
+        # sr = audio.frame_rate
+        audio_cleaned = clean_audio(audio, sr)
         # 3. Suppression des longs silences
-        cleaned = get_segments([audio])[0]
+
+        # 4. Normalisation
+        sample_width = 2
+
+        audio_clipped = np.clip(audio, -1.0, 1.0)
+        max_val = float(2 ** (sample_width * 8 - 1))
+        audio_int = (audio_clipped * max_val).astype(np.int16)
+        audio_cleaned =AudioSegment(
+            audio_int.tobytes(),
+            frame_rate=sr,
+            sample_width=sample_width,
+            channels=1
+        )
+
+        cleaned = get_segments([audio_cleaned])[0]
         print(f"   Durée originale : {len(audio)/1000:.1f}s → "
               f"après nettoyage : {len(cleaned)/1000:.1f}s")
 
