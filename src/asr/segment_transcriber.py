@@ -12,5 +12,3 @@ def transcribe_segment(audio_path):
 
     return text
 
-transcribed_text = transcribe_segment("../../data/processed/audio_cleaned/Shaw - Chbabi [MAg_YfqDFx4]_chunk_0002.wav")
-print("-"*30, "\n", transcribed_text,"\n", "-"*30)
