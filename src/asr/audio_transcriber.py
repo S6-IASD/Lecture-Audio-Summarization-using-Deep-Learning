@@ -1,5 +1,5 @@
 import os
-from segment_transcriber import transcribe_segment
+from asr.segment_transcriber import transcribe_segment
 
 
 def transcribe_audio(audio_segments_dir: str) -> str:
