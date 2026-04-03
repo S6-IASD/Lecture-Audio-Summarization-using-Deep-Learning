@@ -2,9 +2,9 @@ import os
 from pydub import AudioSegment
 import webrtcvad
 
-from vad import get_segments
-from chunks import chunk_audio
-from audio_cleaner import clean_audio
+from preprocessing.vad import get_segments
+from preprocessing.chunks import chunk_audio
+from preprocessing.audio_cleaner import clean_audio
 import librosa
 import numpy as np
 
