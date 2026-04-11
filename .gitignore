@@ -8,8 +8,10 @@ venv/
 
 
 # Dataset
-data/
+/summarization-api/data/
+/summarization-api/output/
 
+/backend/media/
 # Audio
 *.wav
 *.mp3
