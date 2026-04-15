@@ -1,0 +1,1 @@
+SSH is a protocol for connecting to a remote computer securely. It's primarily used for remote command line access, file transfers, and tunneling traffic. There are two main methods, password authentication and SSH key authentication.
