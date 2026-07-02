@@ -1,17 +1,14 @@
 # Lecture Audio Summarization using Deep Learning
 
-This is a project I built for my S6 IASD coursework. The idea is simple: you give it an audio recording (a lecture, a conference talk, whatever), and it gives you back a transcript, a short text summary, and even an audio version of that summary spoken in a cloned voice.
+This is a project we built for our S6 IASD coursework. The idea is simple: you give it an audio recording (a lecture, a conference talk, whatever), and it gives you back a transcript, a short text summary, and even an audio version of that summary spoken in a cloned voice.
 
 It's split into three parts that talk to each other: a React frontend, a Django backend for auth and storage, and a FastAPI service that handles the actual audio processing. Because the ML models (Whisper, BART, the TTS model) are heavy, the FastAPI service doesn't run everything locally — it does the light preprocessing on your machine and then sends the audio chunks to a Google Colab notebook (for the free GPU) through an ngrok tunnel.
 
 ## How it fits together
+<img width="1050" height="582" alt="image" src="https://github.com/user-attachments/assets/f9bb532c-6773-4049-bcfd-93b0d010933e" />
 
-```
-User                Frontend (React)         Django backend           FastAPI service            Colab API
-uploads   --POST-->  interface, displays --POST /upload--> auth, storage --POST /preprocess--> audio cleanup,   --ngrok tunnel--> Whisper / BART / TTS
-audio file            results                                                                    normalization,                   transcription + summary
-                                                                                                   chunking
-```
+
+<img width="1040" height="587" alt="image" src="https://github.com/user-attachments/assets/9976492c-fa41-4ea8-87af-df3e35dac075" />
 
 Basically: the user drops a file in the browser, the React app sends it to Django (which checks you're logged in and will store the result), Django forwards it to the local FastAPI service which does the preprocessing (cleaning, VAD, chunking into ~30s pieces), and that service ships the chunks over an ngrok tunnel to the Colab notebook where the actual heavy models run. The JSON result (transcript + summary + audio) travels all the way back the same path.
 
@@ -177,16 +174,12 @@ There's an evaluation module at `summarization-api/src/evaluation/summary_evalua
 
 Also included: `src/evaluation/evaluation.ipynb` and `COLAB_EVALUATION_CELLS.py` if you want to run the evaluation directly in Colab.
 
-Here's what I got when I actually ran it on my test set:
+Here's what we got when we actually ran it on our test set:
 
-| Metric | Stage | Score | Threshold | Result |
-|---|---|---|---|---|
-| WER | Whisper (ASR) | 3.84% | < 10% | excellent |
-| CER | Whisper (ASR) | 2.66% | < 5% | excellent |
-| ROUGE-1 / ROUGE-L | BART (summarization) | 0.4528 / 0.4025 | > 0.35 / > 0.30 | valid |
-| RTF | Chatterbox (TTS) | 1.0023 | < 1.0 | borderline |
+<img width="1042" height="587" alt="image" src="https://github.com/user-attachments/assets/62965a02-1ed4-4123-8869-4b49e13469b9" />
 
-The ASR and summarization numbers are solid. The TTS real-time factor is just barely over 1.0, meaning generating the audio summary takes slightly longer than the audio itself lasts — not great if you need near real-time output, but fine for an async "upload and come back later" use case like this one.
+
+The ASR and summarization numbers are solid (WER 3.84%, CER 2.66%, well under threshold). The TTS real-time factor is just barely over 1.0, meaning generating the audio summary takes slightly longer than the audio itself lasts — not great if you need near real-time output, but fine for an async "upload and come back later" use case like this one.
 
 ## Config you might need to touch
 
